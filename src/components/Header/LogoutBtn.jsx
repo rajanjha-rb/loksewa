@@ -5,7 +5,7 @@ import { useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { LogOut } from "lucide-react";
 
-function LogoutBtn() {
+const LogoutBtn = ({ className = "" }) => {
   const dispatch = useDispatch();
   const [loader, setLoader] = useState(false);
 
@@ -18,23 +18,21 @@ function LogoutBtn() {
   };
 
   return (
-    <>
+    <button
+      disabled={loader}
+      onClick={logoutHandler}
+      className={`inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-red-600 text-white hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800 h-10 px-4 py-2 ${className}`}
+    >
       {loader ? (
-        <div className="flex justify-center items-center px-4 py-2">
-          <ClipLoader color="#DC2626" size={26} />
-        </div>
+        <ClipLoader color="#ffffff" size={20} />
       ) : (
-        <button
-          disabled={loader}
-          onClick={logoutHandler}
-          className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-md font-semibold transition duration-200"
-        >
-          <LogOut size={18} />
-          Logout
-        </button>
+        <>
+          <LogOut className="h-4 w-4" />
+          <span>Logout</span>
+        </>
       )}
-    </>
+    </button>
   );
-}
+};
 
 export default LogoutBtn;
