@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { LogoutBtn } from "../components";
 import {
   Home,
   Users,
@@ -1167,6 +1168,7 @@ export default function AdminDashboard() {
                 </p>
               </div>
             </div>
+            <LogoutBtn className="w-full justify-start px-3 py-2 text-sm hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20" />
           </div>
         </div>
       </aside>
