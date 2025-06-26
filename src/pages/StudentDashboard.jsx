@@ -1034,7 +1034,7 @@ const StudentDashboard = () => {
             isDarkMode
               ? "bg-gray-800 border-gray-700"
               : "bg-white border-gray-200"
-          } border-r mt-16 lg:mt-0 max-h-[calc(100vh-4rem)] lg:max-h-none shadow-2xl lg:shadow-none`}
+          } border-r lg:mt-16 lg:max-h-none shadow-2xl lg:shadow-none`}
           style={{ touchAction: sidebarOpen ? 'none' : 'auto' }}
         >
           {/* Close button for mobile */}
@@ -1096,7 +1096,7 @@ const StudentDashboard = () => {
             </nav>
           </div>
           {/* Mobile-only: Profile, Dark Mode, Logout */}
-          <div className="lg:hidden px-4 pb-6 mt-auto flex flex-col gap-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="lg:hidden px-4 pb-6 flex flex-col gap-4 border-t border-gray-200 dark:border-gray-700">
             <div className="flex items-center gap-3 mt-4">
               <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-lg font-bold text-white">JS</div>
               <div>
