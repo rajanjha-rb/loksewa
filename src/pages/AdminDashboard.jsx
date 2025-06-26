@@ -1419,7 +1419,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="h-screen bg-gray-50 dark:bg-gray-900 flex font-sans" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900 font-sans" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
         <div
@@ -1437,67 +1437,78 @@ export default function AdminDashboard() {
       >
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="p-4 lg:p-6 border-b border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between">
-              <img src="/logo.svg" alt="Loksewa Academy Logo" className="h-8 w-auto" />
-              <Button
-                variant="ghost"
-                size="icon"
-                className="lg:hidden dark:text-gray-200 dark:hover:text-white"
-                onClick={() => setSidebarOpen(false)}
-              >
-                <X size={20} />
-              </Button>
-            </div>
+          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 lg:hidden">
+            <span className="font-bold text-lg text-gray-800 dark:text-white">Menu</span>
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+              aria-label="Close sidebar"
+            >
+              <X size={24} />
+            </button>
           </div>
-
           {/* Navigation (scrollable) */}
-          <nav className="flex-1 overflow-y-auto p-2 sm:p-4 space-y-2">
-            {sidebarItemsWithNotifications.map(({ name, icon: Icon, hasUnread }) => (
-              <Button
-                key={name}
-                variant={active === name ? "default" : "ghost"}
-                className={`w-full flex items-center justify-start transition-all duration-150 text-sm sm:text-base ${
-                  active !== name
-                    ? "dark:text-gray-300 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700" : "shadow-md border border-blue-200 dark:border-blue-800"
-                } cursor-pointer group`}
+          <nav className="flex-1 overflow-y-auto p-4 space-y-1">
+            {sidebarItemsWithNotifications.map((item) => (
+              <button
+                key={item.name}
                 onClick={() => {
-                  setActive(name);
+                  setActive(item.name);
                   setSidebarOpen(false);
                 }}
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 text-base sm:text-sm ${
+                  active === item.name
+                    ? darkMode
+                      ? "bg-blue-600 text-white shadow"
+                      : "bg-blue-500 text-white shadow"
+                    : darkMode
+                    ? "text-gray-300 hover:bg-gray-700 hover:text-white"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                }`}
               >
-                <span className="min-w-[24px] flex items-center justify-center">
-                  <Icon size={22} className="group-hover:scale-110 transition-transform" />
-                </span>
-                <span className="font-semibold text-sm sm:text-base">{name}</span>
-                {name === "Notifications" && hasUnread && (
-                  <span className="ml-2 w-2 h-2 bg-blue-500 rounded-full"></span>
+                {item.name === "Notifications" ? (
+                  <>
+                    <Bell size={18} />
+                    <span className="font-medium">Notifications</span>
+                    {item.hasUnread && (
+                      <span className="ml-2 w-2 h-2 bg-blue-500 rounded-full"></span>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <item.icon size={18} />
+                    <span className="font-medium">{item.name}</span>
+                  </>
                 )}
-              </Button>
+              </button>
             ))}
           </nav>
-
           {/* Admin Profile Section (sticky bottom) */}
           <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-inherit">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 border-blue-300 dark:border-blue-700 shadow">
-                <img
-                  src={settings.profilePicPreview || "/adhikrit.png"}
-                  alt="Admin Profile"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm sm:text-base font-bold truncate dark:text-gray-100">{settings.name}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{settings.email}</p>
+              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-lg font-bold text-white">AU</div>
+              <div>
+                <div className={`font-semibold text-base ${darkMode ? 'text-white' : 'text-gray-900'}`}>{settings.name}</div>
+                <div className={`text-xs ${darkMode ? 'text-gray-400' : 'text-gray-500'}`}>{settings.email}</div>
               </div>
             </div>
-            <Button
+            <button
+              onClick={() => setDarkMode((prev) => !prev)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors w-full justify-center ${
+                darkMode
+                  ? "bg-gray-700 text-yellow-400 hover:bg-gray-600"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              {darkMode ? <Sun size={18} /> : <Moon size={18} />}
+              <span className="text-sm font-medium">{darkMode ? 'Light Mode' : 'Dark Mode'}</span>
+            </button>
+            <button
               className={`w-full flex items-center gap-2 justify-center mt-3 ${darkMode ? "bg-red-700 hover:bg-red-800" : "bg-red-600 hover:bg-red-700"} text-white font-semibold py-2 rounded-lg transition-colors`}
               onClick={() => {/* logout logic here or use LogoutBtn if available */}}
             >
               Logout
-            </Button>
+            </button>
           </div>
         </div>
       </aside>
