@@ -1028,13 +1028,13 @@ const StudentDashboard = () => {
       <div className="flex">
         {/* Sidebar */}
         <aside
-          className={`fixed inset-y-0 left-0 z-40 w-64 transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
+          className={`flex flex-col h-screen fixed inset-y-0 left-0 z-40 w-64 transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
           } ${
             isDarkMode
               ? "bg-gray-800 border-gray-700"
               : "bg-white border-gray-200"
-          } border-r overflow-y-auto mt-16 lg:mt-0 max-h-[calc(100vh-4rem)] lg:max-h-none shadow-2xl lg:shadow-none`}
+          } border-r mt-16 lg:mt-0 max-h-[calc(100vh-4rem)] lg:max-h-none shadow-2xl lg:shadow-none`}
           style={{ touchAction: sidebarOpen ? 'none' : 'auto' }}
         >
           {/* Close button for mobile */}
@@ -1048,7 +1048,8 @@ const StudentDashboard = () => {
               <X size={24} />
             </button>
           </div>
-          <div className="p-4">
+          {/* Scrollable menu area */}
+          <div className="flex-1 overflow-y-auto p-4">
             <nav className="space-y-1">
               {sidebarWithNotifications.map((item) => (
                 item.id === "notifications" ? (
