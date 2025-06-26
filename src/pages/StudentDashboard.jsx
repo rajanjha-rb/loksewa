@@ -1008,14 +1008,26 @@ const StudentDashboard = () => {
       <div className="flex">
         {/* Sidebar */}
         <aside
-          className={`${sidebarOpen ? "translate-x-0" : "-translate-x-full"} 
-          lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-40 w-64 transition-transform duration-300 ease-in-out ${
+          className={`fixed inset-y-0 left-0 z-40 w-64 transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
+            sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } ${
             isDarkMode
               ? "bg-gray-800 border-gray-700"
               : "bg-white border-gray-200"
           } border-r overflow-y-auto mt-16 lg:mt-0 max-h-[calc(100vh-4rem)] lg:max-h-none shadow-2xl lg:shadow-none`}
           style={{ touchAction: sidebarOpen ? 'none' : 'auto' }}
         >
+          {/* Close button for mobile */}
+          <div className="flex items-center justify-between lg:hidden px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+            <span className="font-bold text-lg text-gray-800 dark:text-white">Menu</span>
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+              aria-label="Close sidebar"
+            >
+              <X size={24} />
+            </button>
+          </div>
           <div className="p-4">
             <nav className="space-y-1">
               {sidebarItems.map((item) => (
@@ -1046,10 +1058,15 @@ const StudentDashboard = () => {
         {/* Overlay for mobile sidebar */}
         {sidebarOpen && (
           <div
-            className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30 mt-16"
+            className="fixed inset-0 bg-black bg-opacity-50 z-30"
             style={{ touchAction: 'auto' }}
             onClick={() => setSidebarOpen(false)}
           ></div>
+        )}
+
+        {/* Prevent background scroll when sidebar is open on mobile */}
+        {sidebarOpen && (
+          <style>{`body { overflow: hidden !important; }`}</style>
         )}
 
         {/* Main content */}
