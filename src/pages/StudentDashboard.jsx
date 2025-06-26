@@ -802,11 +802,7 @@ const StudentDashboard = () => {
               {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
             <div className="flex items-center space-x-2 sm:space-x-3">
-              <img
-                src="/logo.svg"
-                alt="Loksewa Academy Logo"
-                className="h-8 w-auto mr-2"
-              />
+              {/* Remove the logo.svg image */}
             </div>
           </div>
 
