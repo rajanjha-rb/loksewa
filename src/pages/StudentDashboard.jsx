@@ -1057,20 +1057,19 @@ const StudentDashboard = () => {
 
         {/* Overlay for mobile sidebar */}
         {sidebarOpen && (
-          <div
-            className="fixed inset-0 bg-black bg-opacity-50 z-30"
-            style={{ touchAction: 'auto' }}
-            onClick={() => setSidebarOpen(false)}
-          ></div>
+          <>
+            <div
+              className="fixed inset-0 bg-black bg-opacity-50 z-30"
+              style={{ touchAction: 'auto' }}
+              onClick={() => setSidebarOpen(false)}
+            ></div>
+            {/* Prevent background scroll when sidebar is open on mobile */}
+            <style>{`body { overflow: hidden !important; }`}</style>
+          </>
         )}
 
-        {/* Prevent background scroll when sidebar is open on mobile */}
-        {sidebarOpen && (
-          <style>{`body { overflow: hidden !important; }`}</style>
-        )}
-
-        {/* Main content */}
-        <main className="flex-1 p-2 sm:p-4 lg:p-6 min-w-0">
+        {/* Main content: hide on mobile when sidebar is open */}
+        <main className={`flex-1 p-2 sm:p-4 lg:p-6 min-w-0 ${sidebarOpen ? 'hidden lg:block' : ''}`}>
           {/* Dashboard Tab */}
           {activeTab === "dashboard" && (
             <div className="space-y-4 sm:space-y-6">
