@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { LogoutBtn } from "../components/Header/LogoutBtn";
+import LogoutBtn from "../components/Header/LogoutBtn";
 import {
   Home,
   Users,
