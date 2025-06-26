@@ -1526,6 +1526,7 @@ export default function AdminDashboard() {
               >
                 <Menu size={20} />
               </Button>
+              <img src="/logo.svg" alt="Loksewa Logo" className="h-8 w-auto hidden sm:block" />
               <span className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100 tracking-tight">Admin Dashboard</span>
             </div>
             <div className="flex items-center gap-1 sm:gap-2">

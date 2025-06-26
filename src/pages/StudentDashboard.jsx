@@ -855,8 +855,9 @@ const StudentDashboard = () => {
         </div>
         {/* Desktop/Tablet Header */}
         <div className="hidden sm:flex flex-col sm:flex-row items-center justify-between px-4 lg:px-6 h-auto sm:h-16 gap-2 sm:gap-0">
-          {/* Left section (empty for now, could add logo) */}
+          {/* Left section: Logo for desktop/laptop */}
           <div className="flex items-center w-full sm:w-auto justify-between">
+            <img src="/logo.svg" alt="Loksewa Logo" className="h-8 w-auto mr-4 hidden sm:block" />
             {/* Hamburger hidden on sm+ */}
           </div>
           {/* Right section */}
