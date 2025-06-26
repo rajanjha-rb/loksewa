@@ -676,6 +676,18 @@ export default function AdminDashboard() {
     setAssignEmail("");
   }
 
+  // Lock body scroll when sidebar is open (mobile)
+  useEffect(() => {
+    if (sidebarOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [sidebarOpen]);
+
   // Render functions
   function renderDashboard() {
     return (
