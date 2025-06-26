@@ -1419,7 +1419,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex font-sans" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
+    <div className="h-screen bg-gray-50 dark:bg-gray-900 flex font-sans" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
         <div
