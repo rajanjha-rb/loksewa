@@ -1048,119 +1048,39 @@ const StudentDashboard = () => {
             {/* Navigation (scrollable) */}
             <nav className="flex-1 overflow-y-auto p-4 space-y-1">
               {sidebarWithNotifications.map((item) => (
-                item.id === "notifications" ? (
-                  <button
-                    key={item.id}
-                    onClick={() => {
-                      setShowNotifications(!showNotifications);
-                      setSidebarOpen(false);
-                    }}
-                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 text-base sm:text-sm ${
-                      isDarkMode
-                        ? "text-gray-300 hover:bg-gray-700 hover:text-white"
-                        : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                    }`}
-                  >
-                    <Bell size={18} />
-                    <span className="font-medium">Notifications</span>
-                    {dummyNotifications.some((n) => n.unread) && (
-                      <span className="ml-2 w-2 h-2 bg-blue-500 rounded-full"></span>
-                    )}
-                  </button>
-                ) : (
-                  <button
-                    key={item.id}
-                    onClick={() => {
-                      handleTabChange(item.id);
-                      setSidebarOpen(false);
-                    }}
-                    className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 text-base sm:text-sm ${
-                      activeTab === item.id
-                        ? isDarkMode
-                          ? "bg-blue-600 text-white shadow"
-                          : "bg-blue-500 text-white shadow"
-                        : isDarkMode
-                        ? "text-gray-300 hover:bg-gray-700 hover:text-white"
-                        : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                    }`}
-                  >
-                    <item.icon size={18} />
-                    <span className="font-medium">{item.label}</span>
-                  </button>
-                )
-              ))}
-            </nav>
-            {/* Sidebar Notifications Dropdown */}
-            {showNotifications && sidebarOpen && (
-              <div
-                className={`mt-2 w-full rounded-xl shadow-2xl border z-50 ${
-                  isDarkMode
-                    ? "bg-gray-800 border-gray-700"
-                    : "bg-white border-gray-200"
-                }`}
-                style={{ minWidth: '220px', maxWidth: '95vw' }}
-              >
-                <div
-                  className={`p-4 border-b ${
-                    isDarkMode ? "border-gray-700" : "border-gray-100"
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    handleTabChange(item.id);
+                    setSidebarOpen(false);
+                  }}
+                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 text-base sm:text-sm ${
+                    activeTab === item.id
+                      ? isDarkMode
+                        ? "bg-blue-600 text-white shadow"
+                        : "bg-blue-500 text-white shadow"
+                      : isDarkMode
+                      ? "text-gray-300 hover:bg-gray-700 hover:text-white"
+                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                   }`}
                 >
-                  <h3
-                    className={`font-semibold text-sm ${
-                      isDarkMode ? "text-white" : "text-gray-900"
-                    }`}
-                  >
-                    Notifications
-                  </h3>
-                </div>
-                <div className="max-h-96 overflow-y-auto">
-                  {notifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      className={`p-4 border-b last:border-b-0 hover:bg-opacity-50 transition-colors cursor-pointer text-base sm:text-sm ${
-                        isDarkMode
-                          ? "border-gray-700 hover:bg-gray-700 text-gray-300"
-                          : "border-gray-100 hover:bg-gray-50 text-gray-600"
-                      } ${
-                        notification.unread
-                          ? "bg-blue-50 dark:bg-blue-950"
-                          : ""
-                      }`}
-                      style={{ minHeight: '56px' }}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h4
-                            className={`font-medium text-sm ${
-                              isDarkMode ? "text-white" : "text-gray-900"
-                            }`}
-                          >
-                            {notification.title}
-                          </h4>
-                          <p
-                            className={`text-xs mt-1 ${
-                              isDarkMode ? "text-gray-400" : "text-gray-600"
-                            }`}
-                          >
-                            {notification.message}
-                          </p>
-                          <span
-                            className={`text-xs mt-2 block ${
-                              isDarkMode ? "text-gray-500" : "text-gray-400"
-                            }`}
-                          >
-                            {notification.time}
-                          </span>
-                        </div>
-                        {notification.unread && (
-                          <div className="w-2 h-2 bg-blue-500 rounded-full mt-1 ml-2"></div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+                  {item.id === "notifications" ? (
+                    <>
+                      <Bell size={18} />
+                      <span className="font-medium">Notifications</span>
+                      {dummyNotifications.some((n) => n.unread) && (
+                        <span className="ml-2 w-2 h-2 bg-blue-500 rounded-full"></span>
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      <item.icon size={18} />
+                      <span className="font-medium">{item.label}</span>
+                    </>
+                  )}
+                </button>
+              ))}
+            </nav>
             {/* Profile/Logout (sticky bottom) */}
             <div className="p-4 border-t border-gray-200 dark:border-gray-700 lg:hidden bg-inherit">
               <div className="flex items-center gap-3 mb-4">
@@ -2608,6 +2528,54 @@ const StudentDashboard = () => {
                                                                                                               ))}
                                                                                                             </div>
                                                                                                           </div>
+                                                                                                        </div>
+                                                                                                      )}
+
+                                                                                                      {/* Notifications Tab */}
+                                                                                                      {activeTab === "notifications" && (
+                                                                                                        <div className="max-w-full sm:max-w-2xl mx-auto p-2 sm:p-4 md:p-8">
+                                                                                                          <div className="flex items-center gap-2 mb-6">
+                                                                                                            <span className="inline-flex items-center justify-center bg-blue-100 dark:bg-blue-900 rounded-full p-2">
+                                                                                                              <Bell className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                                                                                                            </span>
+                                                                                                            <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white">Notifications</h2>
+                                                                                                          </div>
+                                                                                                          <div className="space-y-4">
+                                                                                                            {notifications.map((n, idx) => (
+                                                                                                              <div
+                                                                                                                key={n.id}
+                                                                                                                className={`relative rounded-xl shadow p-4 flex items-start gap-4 border-l-4 transition-all duration-300 animate-fade-in bg-white dark:bg-gray-800 hover:shadow-lg cursor-pointer
+                                                                                                                  ${n.unread
+                                                                                                                    ? "border-blue-500 bg-blue-50/60 dark:bg-blue-950/40"
+                                                                                                                    : "border-gray-200 dark:border-gray-700"}
+                                                                                                                `}
+                                                                                                                style={{ animationDelay: `${idx * 60}ms` }}
+                                                                                                              >
+                                                                                                                <div className="flex-shrink-0 mt-1">
+                                                                                                                  <Bell className="w-6 h-6 text-blue-500" />
+                                                                                                                </div>
+                                                                                                                <div className="flex-1 min-w-0">
+                                                                                                                  <div className="flex items-center justify-between mb-1">
+                                                                                                                    <h3 className="font-semibold text-base sm:text-lg text-gray-900 dark:text-white truncate">{n.title}</h3>
+                                                                                                                    <span className="text-xs text-gray-400 ml-2 whitespace-nowrap">{n.time}</span>
+                                                                                                                  </div>
+                                                                                                                  <p className="text-gray-700 dark:text-gray-300 text-sm sm:text-base">{n.message}</p>
+                                                                                                                </div>
+                                                                                                                {n.unread && (
+                                                                                                                  <span className="absolute top-3 right-3 w-2 h-2 bg-blue-500 rounded-full animate-pulse" title="Unread"></span>
+                                                                                                                )}
+                                                                                                              </div>
+                                                                                                            ))}
+                                                                                                          </div>
+                                                                                                          <style>{`
+                                                                                                            @keyframes fade-in {
+                                                                                                              from { opacity: 0; transform: translateY(16px); }
+                                                                                                              to { opacity: 1; transform: none; }
+                                                                                                            }
+                                                                                                            .animate-fade-in {
+                                                                                                              animation: fade-in 0.5s both;
+                                                                                                            }
+                                                                                                          `}</style>
                                                                                                         </div>
                                                                                                       )}
                                                                                                     </main>
