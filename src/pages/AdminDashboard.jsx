@@ -17,6 +17,8 @@ import {
   Layers,
   CheckCircle,
   XCircle,
+  Sun,
+  Moon,
 } from "lucide-react";
 
 import {
@@ -527,15 +529,32 @@ function downloadCSV(data, filename = "users.csv") {
 }
 
 export default function AdminDashboard() {
-  const [active, setActive] = useState("Dashboard");
+  // System theme mode logic (like StudentDashboard)
   const [darkMode, setDarkMode] = useState(() => {
-    if (typeof window !== "undefined") {
-      const savedMode = localStorage.getItem("darkMode");
-      if (savedMode !== null) return savedMode === "true";
-      return window.matchMedia("(prefers-color-scheme: dark)").matches;
-    }
-    return false;
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") return true;
+    if (savedTheme === "light") return false;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) return;
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleChange = (e) => setDarkMode(e.matches);
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [darkMode]);
+
+  const [active, setActive] = useState("Dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userTab, setUserTab] = useState("total");
   const [chartPeriod, setChartPeriod] = useState("month");
@@ -564,43 +583,12 @@ export default function AdminDashboard() {
     if (fileInputRef.current) fileInputRef.current.click();
   };
 
-  const [showNotificationsDropdown, setShowNotificationsDropdown] = useState(false);
-  const notificationsDropdownRef = React.useRef(null);
-
-  // Close notifications dropdown on outside click
-  useEffect(() => {
-    if (!showNotificationsDropdown) return;
-    function handleClickOutside(event) {
-      if (
-        notificationsDropdownRef.current &&
-        !notificationsDropdownRef.current.contains(event.target)
-      ) {
-        setShowNotificationsDropdown(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [showNotificationsDropdown]);
-
-  useEffect(() => {
-    const root = window.document.documentElement;
-    if (darkMode) {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
-  }, [darkMode]);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    const handleChange = () => {
-      if (!localStorage.getItem("darkMode")) {
-        setDarkMode(mediaQuery.matches);
-      }
-    };
-    mediaQuery.addEventListener("change", handleChange);
-    return () => mediaQuery.removeEventListener("change", handleChange);
-  }, []);
+  // Sidebar items with notification dot
+  const sidebarItemsWithNotifications = sidebarItems.map((item) =>
+    item.name === "Notifications"
+      ? { ...item, hasUnread: dummyNotifications.some((n) => n.type === "success" || n.type === "warning") }
+      : item
+  );
 
   // Filter users based on tab
   let filteredUsers = dummyStudents;
@@ -1274,60 +1262,6 @@ export default function AdminDashboard() {
     );
   }
 
-  function renderNotifications() {
-    return (
-      <div className="max-w-full sm:max-w-2xl mx-auto p-2 sm:p-4 md:p-8">
-        <div className="flex items-center gap-2 mb-6">
-          <span className="inline-flex items-center justify-center bg-blue-100 dark:bg-blue-900 rounded-full p-2">
-            <svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6 text-blue-600 dark:text-blue-400' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9' /></svg>
-          </span>
-          <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white">Notifications</h2>
-        </div>
-        <div className="space-y-4">
-          {dummyNotifications.map((n, idx) => (
-            <div
-              key={n.id}
-              className={`relative rounded-xl shadow p-4 flex items-start gap-4 border-l-4 transition-all duration-300 animate-fade-in bg-white dark:bg-gray-800 hover:shadow-lg cursor-pointer
-                ${n.type === "success"
-                  ? "border-green-500 bg-green-50/60 dark:bg-green-950/40"
-                  : n.type === "warning"
-                  ? "border-yellow-500 bg-yellow-50/60 dark:bg-yellow-950/40"
-                  : "border-blue-500 bg-blue-50/60 dark:bg-blue-950/40"}
-              `}
-              style={{ animationDelay: `${idx * 60}ms` }}
-            >
-              <div className="flex-shrink-0 mt-1">
-                {n.type === "success" && <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
-                {n.type === "warning" && <svg className="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12A9 9 0 113 12a9 9 0 0118 0z" /></svg>}
-                {n.type !== "success" && n.type !== "warning" && <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z" /></svg>}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between mb-1">
-                  <h3 className="font-semibold text-base sm:text-lg text-gray-900 dark:text-white truncate">{n.title}</h3>
-                  <span className="text-xs text-gray-400 ml-2 whitespace-nowrap">{n.time}</span>
-                </div>
-                <p className="text-gray-700 dark:text-gray-300 text-sm sm:text-base">{n.message}</p>
-              </div>
-              {/* Unread indicator for the first 2 notifications as example */}
-              {idx < 2 && (
-                <span className="absolute top-3 right-3 w-2 h-2 bg-red-500 rounded-full animate-pulse" title="Unread"></span>
-              )}
-            </div>
-          ))}
-        </div>
-        <style>{`
-          @keyframes fade-in {
-            from { opacity: 0; transform: translateY(16px); }
-            to { opacity: 1; transform: none; }
-          }
-          .animate-fade-in {
-            animation: fade-in 0.5s both;
-          }
-        `}</style>
-      </div>
-    );
-  }
-
   function renderAssignRole(props) {
     const { role, setRole, name, setName, email, setEmail, success, handleSubmit } = props;
     return (
@@ -1496,12 +1430,10 @@ export default function AdminDashboard() {
 
       {/* Sidebar */}
       <aside
-        className={`
-        fixed lg:static inset-y-0 left-0 z-50 w-64 max-w-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700
+        className={`fixed lg:static inset-y-0 left-0 z-50 w-64 max-w-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700
         transform transition-transform duration-200 ease-in-out
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
-        shadow-xl
-      `}
+        shadow-xl`}
       >
         <div className="flex flex-col h-full">
           {/* Header */}
@@ -1519,9 +1451,9 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* Navigation */}
-          <nav className="flex-1 p-2 sm:p-4 space-y-2">
-            {sidebarItems.map(({ name, icon: Icon }) => (
+          {/* Navigation (scrollable) */}
+          <nav className="flex-1 overflow-y-auto p-2 sm:p-4 space-y-2">
+            {sidebarItemsWithNotifications.map(({ name, icon: Icon, hasUnread }) => (
               <Button
                 key={name}
                 variant={active === name ? "default" : "ghost"}
@@ -1538,6 +1470,9 @@ export default function AdminDashboard() {
                   <Icon size={22} className="group-hover:scale-110 transition-transform" />
                 </span>
                 <span className="font-semibold text-sm sm:text-base">{name}</span>
+                {name === "Notifications" && hasUnread && (
+                  <span className="ml-2 w-2 h-2 bg-blue-500 rounded-full"></span>
+                )}
               </Button>
             ))}
           </nav>
@@ -1557,7 +1492,12 @@ export default function AdminDashboard() {
                 <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{settings.email}</p>
               </div>
             </div>
-            <LogoutBtn className="w-full mt-2" />
+            <Button
+              className={`w-full flex items-center gap-2 justify-center mt-3 ${darkMode ? "bg-red-700 hover:bg-red-800" : "bg-red-600 hover:bg-red-700"} text-white font-semibold py-2 rounded-lg transition-colors`}
+              onClick={() => {/* logout logic here or use LogoutBtn if available */}}
+            >
+              Logout
+            </Button>
           </div>
         </div>
       </aside>
@@ -1582,31 +1522,11 @@ export default function AdminDashboard() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="hover:bg-blue-100 dark:hover:bg-blue-900 relative"
-                onClick={() => setShowNotificationsDropdown((v) => !v)}
-                aria-label="Show notifications"
-              >
-                <Bell size={20} />
-                {dummyNotifications.length > 0 && (
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-                )}
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
                 className="hover:bg-blue-100 dark:hover:bg-blue-900"
-                onClick={() => {
-                  const newMode = !darkMode;
-                  setDarkMode(newMode);
-                  localStorage.setItem("darkMode", newMode.toString());
-                }}
+                onClick={() => setDarkMode((prev) => !prev)}
                 aria-label="Toggle dark mode"
               >
-                {darkMode ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m8.66-13.66l-.71.71M4.05 19.95l-.71.71M21 12h-1M4 12H3m16.66 5.66l-.71-.71M4.05 4.05l-.71-.71M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z" /></svg>
-                )}
+                {darkMode ? <Sun size={20} /> : <Moon size={20} />}
               </Button>
             </div>
           </div>
@@ -1620,7 +1540,52 @@ export default function AdminDashboard() {
           {active === "MCQ" && renderMCQ()}
           {active === "Conduct Mock Test" && renderMockTest()}
           {active === "Publish Study Material" && renderPublishMaterial()}
-          {active === "Notifications" && renderNotifications()}
+          {active === "Notifications" && (
+            <div className="max-w-full sm:max-w-2xl mx-auto p-2 sm:p-4 md:p-8">
+              <div className="flex items-center gap-2 mb-6">
+                <span className="inline-flex items-center justify-center bg-blue-100 dark:bg-blue-900 rounded-full p-2">
+                  <Bell className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                </span>
+                <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white">Notifications</h2>
+              </div>
+              <div className="space-y-4">
+                {dummyNotifications.map((n, idx) => (
+                  <div
+                    key={n.id}
+                    className={`relative rounded-xl shadow p-4 flex items-start gap-4 border-l-4 transition-all duration-300 animate-fade-in bg-white dark:bg-gray-800 hover:shadow-lg cursor-pointer
+                      ${n.type === "success" || n.type === "warning"
+                        ? "border-blue-500 bg-blue-50/60 dark:bg-blue-950/40"
+                        : "border-gray-200 dark:border-gray-700"}
+                    `}
+                    style={{ animationDelay: `${idx * 60}ms` }}
+                  >
+                    <div className="flex-shrink-0 mt-1">
+                      <Bell className="w-6 h-6 text-blue-500" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-1">
+                        <h3 className="font-semibold text-base sm:text-lg text-gray-900 dark:text-white truncate">{n.title}</h3>
+                        <span className="text-xs text-gray-400 ml-2 whitespace-nowrap">{n.time}</span>
+                      </div>
+                      <p className="text-gray-700 dark:text-gray-300 text-sm sm:text-base">{n.message}</p>
+                    </div>
+                    {(n.type === "success" || n.type === "warning") && (
+                      <span className="absolute top-3 right-3 w-2 h-2 bg-blue-500 rounded-full animate-pulse" title="Unread"></span>
+                    )}
+                  </div>
+                ))}
+              </div>
+              <style>{`
+                @keyframes fade-in {
+                  from { opacity: 0; transform: translateY(16px); }
+                  to { opacity: 1; transform: none; }
+                }
+                .animate-fade-in {
+                  animation: fade-in 0.5s both;
+                }
+              `}</style>
+            </div>
+          )}
           {active === "Assign Role" && renderAssignRole({
             role: assignRole,
             setRole: setAssignRole,
@@ -1634,43 +1599,6 @@ export default function AdminDashboard() {
           {active === "Settings" && renderSettings()}
         </div>
       </main>
-
-      {/* Notifications Dropdown */}
-      {showNotificationsDropdown && (
-        <div ref={notificationsDropdownRef} className="fixed right-2 top-20 w-full max-w-xs sm:max-w-md md:max-w-lg rounded-xl shadow-2xl border z-50 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
-          <div className="p-4 border-b border-gray-100 dark:border-gray-700">
-            <h3 className="font-semibold text-sm text-gray-900 dark:text-white">Notifications</h3>
-          </div>
-          <div className="max-h-96 overflow-y-auto">
-            {dummyNotifications.map((n) => (
-              <div
-                key={n.id}
-                className={`p-4 border-b last:border-b-0 hover:bg-opacity-50 transition-colors ${
-                  n.type === "success"
-                    ? "bg-green-50 dark:bg-green-950 border-green-100 dark:border-green-900"
-                    : n.type === "warning"
-                    ? "bg-yellow-50 dark:bg-yellow-950 border-yellow-100 dark:border-yellow-900"
-                    : "bg-blue-50 dark:bg-blue-950 border-blue-100 dark:border-blue-900"
-                }`}
-              >
-                <div className="flex items-start gap-3">
-                  <Bell size={18} className={
-                    n.type === "success"
-                      ? "text-green-500"
-                      : n.type === "warning"
-                      ? "text-yellow-500"
-                      : "text-blue-500"
-                  } />
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-medium text-sm text-gray-900 dark:text-white">{n.title}</h4>
-                    <p className="text-xs mt-1 text-gray-600 dark:text-gray-300">{n.message}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
