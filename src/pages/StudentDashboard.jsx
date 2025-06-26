@@ -1090,6 +1090,77 @@ const StudentDashboard = () => {
                 )
               ))}
             </nav>
+            {/* Sidebar Notifications Dropdown */}
+            {showNotifications && sidebarOpen && (
+              <div
+                className={`mt-2 w-full rounded-xl shadow-2xl border z-50 ${
+                  isDarkMode
+                    ? "bg-gray-800 border-gray-700"
+                    : "bg-white border-gray-200"
+                }`}
+                style={{ minWidth: '220px', maxWidth: '95vw' }}
+              >
+                <div
+                  className={`p-4 border-b ${
+                    isDarkMode ? "border-gray-700" : "border-gray-100"
+                  }`}
+                >
+                  <h3
+                    className={`font-semibold text-sm ${
+                      isDarkMode ? "text-white" : "text-gray-900"
+                    }`}
+                  >
+                    Notifications
+                  </h3>
+                </div>
+                <div className="max-h-96 overflow-y-auto">
+                  {notifications.map((notification) => (
+                    <div
+                      key={notification.id}
+                      className={`p-4 border-b last:border-b-0 hover:bg-opacity-50 transition-colors cursor-pointer text-base sm:text-sm ${
+                        isDarkMode
+                          ? "border-gray-700 hover:bg-gray-700 text-gray-300"
+                          : "border-gray-100 hover:bg-gray-50 text-gray-600"
+                      } ${
+                        notification.unread
+                          ? "bg-blue-50 dark:bg-blue-950"
+                          : ""
+                      }`}
+                      style={{ minHeight: '56px' }}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h4
+                            className={`font-medium text-sm ${
+                              isDarkMode ? "text-white" : "text-gray-900"
+                            }`}
+                          >
+                            {notification.title}
+                          </h4>
+                          <p
+                            className={`text-xs mt-1 ${
+                              isDarkMode ? "text-gray-400" : "text-gray-600"
+                            }`}
+                          >
+                            {notification.message}
+                          </p>
+                          <span
+                            className={`text-xs mt-2 block ${
+                              isDarkMode ? "text-gray-500" : "text-gray-400"
+                            }`}
+                          >
+                            {notification.time}
+                          </span>
+                        </div>
+                        {notification.unread && (
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mt-1 ml-2"></div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             {/* Profile/Logout (sticky bottom) */}
             <div className="p-4 border-t border-gray-200 dark:border-gray-700 lg:hidden bg-inherit">
               <div className="flex items-center gap-3 mb-4">
