@@ -1094,6 +1094,28 @@ const StudentDashboard = () => {
               ))}
             </nav>
           </div>
+          {/* Mobile-only: Profile, Dark Mode, Logout */}
+          <div className="lg:hidden px-4 pb-6 mt-auto flex flex-col gap-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="flex items-center gap-3 mt-4">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-lg font-bold text-white">JS</div>
+              <div>
+                <div className={`font-semibold text-base ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>John Smith</div>
+                <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Aspiring Civil Servant</div>
+              </div>
+            </div>
+            <button
+              onClick={() => setIsDarkMode(!isDarkMode)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors w-full justify-center ${
+                isDarkMode
+                  ? "bg-gray-700 text-yellow-400 hover:bg-gray-600"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+              <span className="text-sm font-medium">{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
+            </button>
+            <LogoutBtn className={`w-full flex items-center gap-2 justify-center ${isDarkMode ? "bg-red-700 hover:bg-red-800" : "bg-red-600 hover:bg-red-700"} text-white font-semibold py-2 rounded-lg transition-colors`} />
+          </div>
         </aside>
 
         {/* Overlay for mobile sidebar */}
