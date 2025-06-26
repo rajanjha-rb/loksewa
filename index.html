@@ -2,15 +2,68 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="icon" type="image/png" href="/icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Prepare smarter for Loksewa exams with mock tests, MCQs, and more."
+      content="Prepare smarter for Loksewa exams with mock tests, MCQs, live updates, and a personal dashboard. Join Loksewa Academy for the best government exam preparation in Nepal."
     />
-    <title>Loksewa Academy</title>
+    <meta name="keywords" content="Loksewa, Loksewa Academy, Nepal, government exams, mock tests, MCQ, online learning, civil service, preparation, dashboard" />
+    <link rel="canonical" href="https://loksewa.example.com/" />
+    <title>Loksewa Academy | Mock Tests, MCQs, Live Updates & Dashboard</title>
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Loksewa Academy | Mock Tests, MCQs, Live Updates & Dashboard" />
+    <meta property="og:description" content="Prepare smarter for Loksewa exams with mock tests, MCQs, live updates, and a personal dashboard. Join Loksewa Academy for the best government exam preparation in Nepal." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://loksewa.example.com/" />
+    <meta property="og:image" content="/icon.png" />
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Loksewa Academy | Mock Tests, MCQs, Live Updates & Dashboard" />
+    <meta name="twitter:description" content="Prepare smarter for Loksewa exams with mock tests, MCQs, live updates, and a personal dashboard. Join Loksewa Academy for the best government exam preparation in Nepal." />
+    <meta name="twitter:image" content="/icon.png" />
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Loksewa Academy",
+        "url": "https://loksewa.example.com/",
+        "logo": "/icon.png",
+        "description": "Prepare smarter for Loksewa exams with mock tests, MCQs, live updates, and a personal dashboard.",
+        "sameAs": [
+          "https://www.facebook.com/yourpage",
+          "https://twitter.com/yourprofile"
+        ]
+      }
+    </script>
+    <script>
+      // Prevent white flash on reload for dark mode users
+      (function () {
+        try {
+          var darkMode = localStorage.getItem("darkMode");
+          if (darkMode === null) {
+            darkMode = window.matchMedia(
+              "(prefers-color-scheme: dark)"
+            ).matches;
+          } else {
+            darkMode = darkMode === "true";
+          }
+          if (darkMode) {
+            document.documentElement.classList.add("dark");
+            document.documentElement.style.background = "#111827"; // Tailwind's gray-900
+          } else {
+            document.documentElement.classList.remove("dark");
+            document.documentElement.style.background = "#f9fafb"; // Tailwind's gray-50
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
-  <body class="bg-white text-gray-800">
+  <body
+    class="bg-white text-gray-800 dark:bg-gray-900"
+    style="background: #f9fafb"
+  >
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

@@ -9,7 +9,7 @@ export default function AuthLayout({ children, authentication = true }) {
 
   useEffect(() => {
     if (authentication && authStatus !== authentication) {
-      navigate("/login");
+      navigate("/");
     } else if (!authentication && authStatus !== authentication) {
       navigate("/");
     }

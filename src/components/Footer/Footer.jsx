@@ -14,14 +14,18 @@ function Footer() {
               className="mb-5 inline-flex items-center gap-3 hover:opacity-90 transition-opacity duration-300"
               aria-label="Loksewa Academy Home"
             >
-              <Logo width="110px" />
+              <img
+                src="/logo.svg"
+                alt="Loksewa Academy Logo"
+                className="h-8 w-auto"
+              />
             </Link>
             <p className="text-sm text-gray-400 leading-relaxed max-w-xs">
               © {new Date().getFullYear()} Loksewa Academy. All rights reserved.
             </p>
             <div className="flex mt-6 space-x-6">
               <a
-                href="https://facebook.com"
+                href="https://www.facebook.com/profile.php?id=61577022802153"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Facebook"
@@ -30,7 +34,7 @@ function Footer() {
                 <Facebook size={22} />
               </a>
               <a
-                href="https://twitter.com"
+                href="https://www.instagram.com/codocu_official/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Twitter"
@@ -39,22 +43,13 @@ function Footer() {
                 <Twitter size={22} />
               </a>
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/codocu_official/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
                 className="hover:text-pink-500 transition-colors"
               >
                 <Instagram size={22} />
-              </a>
-              <a
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="LinkedIn"
-                className="hover:text-blue-700 transition-colors"
-              >
-                <Linkedin size={22} />
               </a>
             </div>
           </div>

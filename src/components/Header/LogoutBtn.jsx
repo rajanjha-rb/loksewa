@@ -4,16 +4,19 @@ import { logout } from "../../store/authSlice";
 import { useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { LogOut } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const LogoutBtn = ({ className = "" }) => {
   const dispatch = useDispatch();
   const [loader, setLoader] = useState(false);
+  const navigate = useNavigate();
 
   const logoutHandler = () => {
     setLoader(true);
     authService.logout().then(() => {
       dispatch(logout());
       setLoader(false);
+      navigate("/");
     });
   };
 

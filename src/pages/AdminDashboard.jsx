@@ -14,6 +14,9 @@ import {
   Menu,
   X,
   User,
+  Layers,
+  CheckCircle,
+  XCircle,
 } from "lucide-react";
 
 import {
@@ -27,6 +30,7 @@ import {
   PieChart,
   Pie,
   Cell,
+  Label as RechartsLabel,
 } from "recharts";
 
 // Custom UI Components
@@ -197,6 +201,11 @@ const sidebarItems = [
   { name: "Users", icon: Users },
   { name: "Courses", icon: BookOpen },
   { name: "Notices", icon: FileText },
+  { name: "MCQ", icon: BookOpen },
+  { name: "Conduct Mock Test", icon: Upload },
+  { name: "Publish Study Material", icon: Layers },
+  { name: "Notifications", icon: Bell },
+  { name: "Assign Role", icon: User },
   { name: "Settings", icon: Settings },
 ];
 
@@ -448,6 +457,45 @@ const initialNotices = [
   },
 ];
 
+// Dummy notifications
+const dummyNotifications = [
+  {
+    id: 1,
+    title: "New User Registered",
+    message: "A new student has signed up for the Loksewa course.",
+    time: "2 minutes ago",
+    type: "success",
+  },
+  {
+    id: 2,
+    title: "Mock Test Completed",
+    message: "Ram Thapa completed the Loksewa Mock Test 1.",
+    time: "10 minutes ago",
+    type: "info",
+  },
+  {
+    id: 3,
+    title: "Material Uploaded",
+    message: "New study material for Kharidar has been published.",
+    time: "1 hour ago",
+    type: "success",
+  },
+  {
+    id: 4,
+    title: "System Update",
+    message: "Dashboard UI has been improved for better experience.",
+    time: "Today",
+    type: "info",
+  },
+  {
+    id: 5,
+    title: "Inactive User Alert",
+    message: "Some users have not logged in for 7 days.",
+    time: "Yesterday",
+    type: "warning",
+  },
+];
+
 // CSV conversion helper
 function convertToCSV(users) {
   const headers = ["ID", "Name", "Email", "Status", "Courses Bought"];
@@ -510,6 +558,29 @@ export default function AdminDashboard() {
     profilePic: null,
     profilePicPreview: "adhikrit.png",
   });
+
+  const fileInputRef = React.useRef(null);
+  const handleUploadClick = () => {
+    if (fileInputRef.current) fileInputRef.current.click();
+  };
+
+  const [showNotificationsDropdown, setShowNotificationsDropdown] = useState(false);
+  const notificationsDropdownRef = React.useRef(null);
+
+  // Close notifications dropdown on outside click
+  useEffect(() => {
+    if (!showNotificationsDropdown) return;
+    function handleClickOutside(event) {
+      if (
+        notificationsDropdownRef.current &&
+        !notificationsDropdownRef.current.contains(event.target)
+      ) {
+        setShowNotificationsDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showNotificationsDropdown]);
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -603,12 +674,26 @@ export default function AdminDashboard() {
     alert("Settings saved successfully!");
   }
 
+  // Assign Role state and handler
+  const [assignRole, setAssignRole] = React.useState("");
+  const [assignName, setAssignName] = React.useState("");
+  const [assignEmail, setAssignEmail] = React.useState("");
+  const [assignSuccess, setAssignSuccess] = React.useState(false);
+  function handleAssignRoleSubmit(e) {
+    e.preventDefault();
+    setAssignSuccess(true);
+    setTimeout(() => setAssignSuccess(false), 2000);
+    setAssignRole("");
+    setAssignName("");
+    setAssignEmail("");
+  }
+
   // Render functions
   function renderDashboard() {
     return (
       <div className="space-y-6">
         {/* KPI Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 lg:gap-6">
           {kpiData.map(({ title, value, icon: Icon, color, bgColor }) => (
             <Card
               key={title}
@@ -632,7 +717,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Charts Section */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-2 sm:gap-4 lg:gap-6">
           {/* Enrollment Chart */}
           <Card className="shadow-sm">
             <CardHeader className="pb-2">
@@ -672,7 +757,7 @@ export default function AdminDashboard() {
               </div>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveContainer width="100%" height={window.innerWidth < 640 ? 220 : 300}>
                 <LineChart data={chartData[chartPeriod]}>
                   <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
                   <XAxis dataKey="period" tick={{ fontSize: 12 }} />
@@ -698,14 +783,14 @@ export default function AdminDashboard() {
           </Card>
 
           {/* Course Purchase Pie Chart */}
-          <Card className="shadow-sm">
+          <Card className="shadow-sm lg:min-w-[420px]">
             <CardHeader>
               <CardTitle className="text-lg lg:text-xl">
                 Course Purchases
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveContainer width="100%" height={window.innerWidth < 640 ? 220 : 300}>
                 <PieChart>
                   <Pie
                     data={coursePurchaseData}
@@ -724,6 +809,18 @@ export default function AdminDashboard() {
                   <Tooltip />
                 </PieChart>
               </ResponsiveContainer>
+              <style>{`
+                .recharts-pie-label-text {
+                  font-size: 1rem;
+                  font-weight: 500;
+                  fill: #374151;
+                }
+                @media (min-width: 1024px) {
+                  .recharts-pie-label-text {
+                    font-size: 1.15rem;
+                  }
+                }
+              `}</style>
             </CardContent>
           </Card>
         </div>
@@ -736,36 +833,42 @@ export default function AdminDashboard() {
       <div className="space-y-6">
         {/* User Filter Tabs */}
         <Tabs value={userTab} onValueChange={setUserTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
+          <TabsList className="flex w-full gap-2 overflow-x-auto no-scrollbar py-2 px-1 whitespace-nowrap">
             <TabsTrigger
               value="total"
-              className="text-xs sm:text-sm"
+              className={`flex items-center gap-2 px-4 py-2 rounded-full font-semibold text-xs sm:text-sm transition-all duration-150 shadow-sm border
+                ${userTab === "total" ? "bg-blue-600 text-white border-blue-600 shadow-md" : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-transparent hover:bg-blue-100 dark:hover:bg-gray-600"}`}
+              style={{ minWidth: '120px', justifyContent: 'center' }}
               onClick={() => setUserTab("total")}
             >
-              Total ({dummyStudents.length})
+              <Users size={16} /> Total ({dummyStudents.length})
             </TabsTrigger>
             <TabsTrigger
               value="active"
-              className="text-xs sm:text-sm"
+              className={`flex items-center gap-2 px-4 py-2 rounded-full font-semibold text-xs sm:text-sm transition-all duration-150 shadow-sm border
+                ${userTab === "active" ? "bg-blue-600 text-white border-blue-600 shadow-md" : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-transparent hover:bg-blue-100 dark:hover:bg-gray-600"}`}
+              style={{ minWidth: '120px', justifyContent: 'center' }}
               onClick={() => setUserTab("active")}
             >
-              Active ({dummyStudents.filter((u) => u.active).length})
+              <CheckCircle size={16} /> Active ({dummyStudents.filter((u) => u.active).length})
             </TabsTrigger>
             <TabsTrigger
               value="bought"
-              className="text-xs sm:text-sm"
+              className={`flex items-center gap-2 px-4 py-2 rounded-full font-semibold text-xs sm:text-sm transition-all duration-150 shadow-sm border
+                ${userTab === "bought" ? "bg-blue-600 text-white border-blue-600 shadow-md" : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-transparent hover:bg-blue-100 dark:hover:bg-gray-600"}`}
+              style={{ minWidth: '140px', justifyContent: 'center' }}
               onClick={() => setUserTab("bought")}
             >
-              With Courses (
-              {dummyStudents.filter((u) => u.courses.length > 0).length})
+              <BookOpen size={16} /> With Courses ({dummyStudents.filter((u) => u.courses.length > 0).length})
             </TabsTrigger>
             <TabsTrigger
               value="notBought"
-              className="text-xs sm:text-sm"
+              className={`flex items-center gap-2 px-4 py-2 rounded-full font-semibold text-xs sm:text-sm transition-all duration-150 shadow-sm border
+                ${userTab === "notBought" ? "bg-blue-600 text-white border-blue-600 shadow-md" : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-transparent hover:bg-blue-100 dark:hover:bg-gray-600"}`}
+              style={{ minWidth: '140px', justifyContent: 'center' }}
               onClick={() => setUserTab("notBought")}
             >
-              No Courses (
-              {dummyStudents.filter((u) => u.courses.length === 0).length})
+              <XCircle size={16} /> No Courses ({dummyStudents.filter((u) => u.courses.length === 0).length})
             </TabsTrigger>
           </TabsList>
         </Tabs>
@@ -795,7 +898,7 @@ export default function AdminDashboard() {
           </CardHeader>
           <CardContent className="p-0">
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full min-w-[600px]">
                 <thead className="bg-gray-50 dark:bg-gray-700">
                   <tr>
                     <th className="text-left p-3 text-sm font-medium">#</th>
@@ -858,7 +961,7 @@ export default function AdminDashboard() {
 
   function renderCourses() {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 lg:gap-6">
         {courses.map((course) => (
           <Card
             key={course.name}
@@ -868,7 +971,7 @@ export default function AdminDashboard() {
               <img
                 src={course.image}
                 alt={course.name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover max-w-full max-h-40"
                 onError={(e) => {
                   const target = e.target;
                   target.src = `https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=225&fit=crop`;
@@ -944,7 +1047,7 @@ export default function AdminDashboard() {
                   <img
                     src={noticeForm.imagePreview}
                     alt="Preview"
-                    className="mt-3 max-h-40 rounded border object-cover"
+                    className="mt-3 max-h-40 rounded border object-cover max-w-full"
                   />
                 )}
               </div>
@@ -965,7 +1068,7 @@ export default function AdminDashboard() {
                     <img
                       src={notice.image}
                       alt={notice.title}
-                      className="w-full md:w-48 h-32 object-cover rounded"
+                      className="w-full md:w-48 h-32 object-cover rounded max-w-full"
                     />
                   )}
                   <div className="flex-1">
@@ -984,9 +1087,303 @@ export default function AdminDashboard() {
     );
   }
 
+  function renderMCQ() {
+    const dummyMCQs = [
+      {
+        id: 1,
+        question: "What is the capital of Nepal?",
+        options: ["Pokhara", "Kathmandu", "Biratnagar", "Lalitpur"],
+        answer: "Kathmandu",
+      },
+      {
+        id: 2,
+        question: "Who is the current President of Nepal?",
+        options: ["Bidya Devi Bhandari", "Ram Chandra Poudel", "Sher Bahadur Deuba", "KP Oli"],
+        answer: "Ram Chandra Poudel",
+      },
+      {
+        id: 3,
+        question: "Which river is the longest in Nepal?",
+        options: ["Koshi", "Gandaki", "Karnali", "Bagmati"],
+        answer: "Karnali",
+      },
+    ];
+    return (
+      <div className="max-w-4xl mx-auto p-2 sm:p-4 md:p-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4 flex-wrap">
+          <div className="flex items-center gap-2 mb-2 sm:mb-0">
+            <span className="inline-flex items-center justify-center bg-blue-100 dark:bg-blue-900 rounded-full p-2">
+              <svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6 text-blue-600 dark:text-blue-400' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M16.88 3.549A9 9 0 113.55 16.88M15 9v2a2 2 0 01-2 2H9m12 4v.01' /></svg>
+            </span>
+            <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white">MCQ Management</h2>
+          </div>
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-full shadow-lg text-base w-full sm:w-auto">+ Add MCQ</Button>
+        </div>
+        {/* Responsive: Cards on mobile, table on md+ */}
+        <div className="block md:hidden space-y-4">
+          {dummyMCQs.map((mcq) => (
+            <div key={mcq.id} className="rounded-xl shadow bg-white dark:bg-gray-800 p-4 flex flex-col gap-2 border border-gray-100 dark:border-gray-700 hover:shadow-md transition">
+              <div className="font-semibold text-lg text-blue-700 dark:text-blue-400 mb-1">Q{mcq.id}. {mcq.question}</div>
+              <ul className="list-disc pl-5 space-y-1 text-gray-700 dark:text-gray-200">
+                {mcq.options.map((opt, idx) => (
+                  <li key={idx} className={opt === mcq.answer ? 'font-bold text-green-600 dark:text-green-400' : ''}>{opt}</li>
+                ))}
+              </ul>
+              <div className="mt-2">
+                <span className="inline-block bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-3 py-1 rounded-full text-xs font-semibold">Answer: {mcq.answer}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="hidden md:block overflow-x-auto rounded-xl shadow bg-white dark:bg-gray-800 mt-2">
+          <table className="min-w-full min-w-[600px] divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-700">
+              <tr>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-200 uppercase">Question</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-200 uppercase">Options</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-200 uppercase">Answer</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700">
+              {dummyMCQs.map((mcq, idx) => (
+                <tr key={mcq.id} className={`transition ${idx % 2 === 0 ? 'bg-gray-50 dark:bg-gray-900/30' : ''} hover:bg-blue-50 dark:hover:bg-blue-900/30`}>
+                  <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100 max-w-xs truncate">Q{mcq.id}. {mcq.question}</td>
+                  <td className="px-4 py-3 text-gray-700 dark:text-gray-300">
+                    <ul className="list-disc pl-5 space-y-1">
+                      {mcq.options.map((opt, oidx) => (
+                        <li key={oidx} className={opt === mcq.answer ? 'font-bold text-green-600 dark:text-green-400' : ''}>{opt}</li>
+                      ))}
+                    </ul>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className="inline-block bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-3 py-1 rounded-full text-xs font-semibold">{mcq.answer}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  }
+
+  function renderMockTest() {
+    const dummyTests = [
+      {
+        id: 1,
+        title: "Loksewa Mock Test 1",
+        date: "2024-06-01",
+        questions: 20,
+        status: "Active",
+      },
+      {
+        id: 2,
+        title: "General Knowledge Test",
+        date: "2024-05-20",
+        questions: 15,
+        status: "Completed",
+      },
+      {
+        id: 3,
+        title: "Current Affairs Quiz",
+        date: "2024-05-10",
+        questions: 10,
+        status: "Active",
+      },
+    ];
+    return (
+      <div className="max-w-4xl mx-auto p-4 sm:p-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4 flex-wrap">
+          <h2 className="text-2xl font-extrabold mb-6 text-gray-900 dark:text-white">Conduct Mock Test</h2>
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg shadow">+ Create Mock Test</Button>
+        </div>
+        <div className="overflow-x-auto rounded-xl shadow bg-white dark:bg-gray-800">
+          <table className="min-w-full min-w-[600px] divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-700">
+              <tr>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-200 uppercase">Title</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-200 uppercase">Date</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-200 uppercase">Questions</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-200 uppercase">Status</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700">
+              {dummyTests.map((test) => (
+                <tr key={test.id} className="hover:bg-blue-50 dark:hover:bg-blue-900/30 transition">
+                  <td className="px-4 py-3 font-medium text-gray-900 dark:text-gray-100 max-w-xs truncate">{test.title}</td>
+                  <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{test.date}</td>
+                  <td className="px-4 py-3 text-gray-700 dark:text-gray-300">{test.questions}</td>
+                  <td className="px-4 py-3">
+                    <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${test.status === "Active" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300"}`}>{test.status}</span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  }
+
+  function renderPublishMaterial() {
+    const dummyMaterials = [
+      {
+        id: 1,
+        title: "Nayab Subba Syllabus PDF",
+        type: "PDF",
+        date: "2024-06-01",
+        link: "#",
+      },
+      {
+        id: 2,
+        title: "Kharidar Practice Set",
+        type: "DOCX",
+        date: "2024-05-28",
+        link: "#",
+      },
+      {
+        id: 3,
+        title: "Sakha Adhikrit Notes",
+        type: "PDF",
+        date: "2024-05-25",
+        link: "#",
+      },
+    ];
+    return (
+      <div className="max-w-4xl mx-auto p-4 sm:p-8">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4 flex-wrap">
+          <h2 className="text-2xl font-extrabold mb-6 text-gray-900 dark:text-white">Publish Study Material</h2>
+          <div className="flex-shrink-0">
+            <Button onClick={handleUploadClick} className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg shadow w-full sm:w-auto">+ Upload Material</Button>
+            <input ref={fileInputRef} type="file" className="hidden" />
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 lg:gap-6">
+          {dummyMaterials.map((mat) => (
+            <div key={mat.id} className="rounded-xl shadow bg-white dark:bg-gray-800 p-5 flex flex-col justify-between h-full">
+              <div>
+                <h3 className="font-semibold text-lg mb-2 text-blue-700 dark:text-blue-400 truncate">{mat.title}</h3>
+                <p className="text-xs text-gray-500 mb-2">Type: <span className="font-medium text-gray-700 dark:text-gray-200">{mat.type}</span></p>
+                <p className="text-xs text-gray-500 mb-4">Uploaded: <span className="font-medium text-gray-700 dark:text-gray-200">{mat.date}</span></p>
+              </div>
+              <a href={mat.link} className="mt-auto inline-block bg-green-500 hover:bg-green-600 text-white text-xs font-semibold px-4 py-2 rounded-lg transition">Download</a>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  function renderNotifications() {
+    return (
+      <div className="max-w-full sm:max-w-2xl mx-auto p-2 sm:p-4 md:p-8">
+        <div className="flex items-center gap-2 mb-6">
+          <span className="inline-flex items-center justify-center bg-blue-100 dark:bg-blue-900 rounded-full p-2">
+            <svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6 text-blue-600 dark:text-blue-400' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9' /></svg>
+          </span>
+          <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white">Notifications</h2>
+        </div>
+        <div className="space-y-4">
+          {dummyNotifications.map((n, idx) => (
+            <div
+              key={n.id}
+              className={`relative rounded-xl shadow p-4 flex items-start gap-4 border-l-4 transition-all duration-300 animate-fade-in bg-white dark:bg-gray-800 hover:shadow-lg cursor-pointer
+                ${n.type === "success"
+                  ? "border-green-500 bg-green-50/60 dark:bg-green-950/40"
+                  : n.type === "warning"
+                  ? "border-yellow-500 bg-yellow-50/60 dark:bg-yellow-950/40"
+                  : "border-blue-500 bg-blue-50/60 dark:bg-blue-950/40"}
+              `}
+              style={{ animationDelay: `${idx * 60}ms` }}
+            >
+              <div className="flex-shrink-0 mt-1">
+                {n.type === "success" && <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+                {n.type === "warning" && <svg className="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12A9 9 0 113 12a9 9 0 0118 0z" /></svg>}
+                {n.type !== "success" && n.type !== "warning" && <svg className="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M12 20a8 8 0 100-16 8 8 0 000 16z" /></svg>}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between mb-1">
+                  <h3 className="font-semibold text-base sm:text-lg text-gray-900 dark:text-white truncate">{n.title}</h3>
+                  <span className="text-xs text-gray-400 ml-2 whitespace-nowrap">{n.time}</span>
+                </div>
+                <p className="text-gray-700 dark:text-gray-300 text-sm sm:text-base">{n.message}</p>
+              </div>
+              {/* Unread indicator for the first 2 notifications as example */}
+              {idx < 2 && (
+                <span className="absolute top-3 right-3 w-2 h-2 bg-red-500 rounded-full animate-pulse" title="Unread"></span>
+              )}
+            </div>
+          ))}
+        </div>
+        <style>{`
+          @keyframes fade-in {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: none; }
+          }
+          .animate-fade-in {
+            animation: fade-in 0.5s both;
+          }
+        `}</style>
+      </div>
+    );
+  }
+
+  function renderAssignRole(props) {
+    const { role, setRole, name, setName, email, setEmail, success, handleSubmit } = props;
+    return (
+      <div className="max-w-full sm:max-w-xl mx-auto p-2 sm:p-4 md:p-8">
+        <h2 className="text-2xl font-extrabold mb-6 text-gray-900 dark:text-white">Assign Role</h2>
+        <form onSubmit={handleSubmit} className="space-y-6 bg-white dark:bg-gray-800 rounded-xl shadow p-4 sm:p-6">
+          <div>
+            <Label htmlFor="name">Name</Label>
+            <Input
+              id="name"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              placeholder="Enter user name"
+              required
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              placeholder="Enter user email"
+              required
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <Label htmlFor="role">Role</Label>
+            <select
+              id="role"
+              value={role}
+              onChange={e => setRole(e.target.value)}
+              required
+              className="mt-1 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 px-3 py-2"
+            >
+              <option value="" disabled>Select a role</option>
+              <option value="Content Management">Content Management</option>
+              <option value="Accountant">Accountant</option>
+              <option value="User Support">User Support</option>
+            </select>
+          </div>
+          <Button type="submit" className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg shadow">Assign Role</Button>
+          {success && (
+            <div className="text-green-600 dark:text-green-400 font-semibold text-center mt-2">Role assigned!</div>
+          )}
+        </form>
+      </div>
+    );
+  }
+
   function renderSettings() {
     return (
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-full sm:max-w-2xl mx-auto">
         <Card className="shadow-sm">
           <CardHeader>
             <CardTitle className="text-lg lg:text-xl">Admin Settings</CardTitle>
@@ -1077,7 +1474,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full sm:w-auto">
                 Save Changes
               </Button>
             </form>
@@ -1088,7 +1485,7 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex font-sans" style={{ fontFamily: 'Inter, system-ui, sans-serif' }}>
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
         <div
@@ -1100,22 +1497,21 @@ export default function AdminDashboard() {
       {/* Sidebar */}
       <aside
         className={`
-        fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700
+        fixed lg:static inset-y-0 left-0 z-50 w-64 max-w-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700
         transform transition-transform duration-200 ease-in-out
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
+        shadow-xl
       `}
       >
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="p-4 lg:p-6 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center justify-between">
-              <h1 className="text-lg lg:text-xl font-bold text-blue-600">
-                Loksewa Institute
-              </h1>
+              <img src="/logo.svg" alt="Loksewa Academy Logo" className="h-8 w-auto" />
               <Button
                 variant="ghost"
                 size="icon"
-                className="lg:hidden"
+                className="lg:hidden dark:text-gray-200 dark:hover:text-white"
                 onClick={() => setSidebarOpen(false)}
               >
                 <X size={20} />
@@ -1124,52 +1520,44 @@ export default function AdminDashboard() {
           </div>
 
           {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-2">
+          <nav className="flex-1 p-2 sm:p-4 space-y-2">
             {sidebarItems.map(({ name, icon: Icon }) => (
               <Button
                 key={name}
                 variant={active === name ? "default" : "ghost"}
-                className={`w-full justify-start ${
+                className={`w-full flex items-center justify-start transition-all duration-150 text-sm sm:text-base ${
                   active !== name
-                    ? "dark:text-gray-300 dark:hover:text-white"
-                    : ""
-                }`}
+                    ? "dark:text-gray-300 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700" : "shadow-md border border-blue-200 dark:border-blue-800"
+                } cursor-pointer group`}
                 onClick={() => {
                   setActive(name);
                   setSidebarOpen(false);
                 }}
               >
-                <Icon size={18} className="mr-3" />
-                {name}
+                <span className="min-w-[24px] flex items-center justify-center">
+                  <Icon size={22} className="group-hover:scale-110 transition-transform" />
+                </span>
+                <span className="font-semibold text-sm sm:text-base">{name}</span>
               </Button>
             ))}
           </nav>
 
-          {/* Admin Profile */}
-          {/* Admin Profile */}
           {/* Admin Profile Section */}
           <div className="p-4 border-t border-gray-200 dark:border-gray-700">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-200 dark:border-gray-600">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 border-blue-300 dark:border-blue-700 shadow">
                 <img
-                  src={
-                    settings.profilePicPreview ||
-                    "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
-                  }
-                  alt="Admin"
+                  src={settings.profilePicPreview || "/adhikrit.png"}
+                  alt="Admin Profile"
                   className="w-full h-full object-cover"
                 />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate dark:text-gray-100">
-                  {settings.name}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                  {settings.email}
-                </p>
+                <p className="text-sm sm:text-base font-bold truncate dark:text-gray-100">{settings.name}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{settings.email}</p>
               </div>
             </div>
-            <LogoutBtn className="w-full" />
+            <LogoutBtn className="w-full mt-2" />
           </div>
         </div>
       </aside>
@@ -1177,9 +1565,9 @@ export default function AdminDashboard() {
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0">
         {/* Top Bar */}
-        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 lg:px-6 py-4">
+        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-2 sm:px-4 lg:px-6 py-3 sm:py-4 shadow-sm">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <Button
                 variant="ghost"
                 size="icon"
@@ -1188,34 +1576,101 @@ export default function AdminDashboard() {
               >
                 <Menu size={20} />
               </Button>
-              <h2 className="text-xl lg:text-2xl font-bold dark:text-white">
-                {active}
-              </h2>
+              <span className="text-base sm:text-lg font-bold text-gray-900 dark:text-gray-100 tracking-tight">Admin Dashboard</span>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => {
-                const newMode = !darkMode;
-                setDarkMode(newMode);
-                localStorage.setItem("darkMode", newMode.toString());
-              }}
-              className="ml-auto dark:text-gray-200 dark:hover:text-white"
-            >
-              {darkMode ? "🌞" : "🌙"}
-            </Button>
+            <div className="flex items-center gap-1 sm:gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hover:bg-blue-100 dark:hover:bg-blue-900 relative"
+                onClick={() => setShowNotificationsDropdown((v) => !v)}
+                aria-label="Show notifications"
+              >
+                <Bell size={20} />
+                {dummyNotifications.length > 0 && (
+                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                )}
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="hover:bg-blue-100 dark:hover:bg-blue-900"
+                onClick={() => {
+                  const newMode = !darkMode;
+                  setDarkMode(newMode);
+                  localStorage.setItem("darkMode", newMode.toString());
+                }}
+                aria-label="Toggle dark mode"
+              >
+                {darkMode ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m8.66-13.66l-.71.71M4.05 19.95l-.71.71M21 12h-1M4 12H3m16.66 5.66l-.71-.71M4.05 4.05l-.71-.71M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z" /></svg>
+                )}
+              </Button>
+            </div>
           </div>
         </header>
-
-        {/* Content */}
-        <div className="flex-1 p-4 lg:p-6 overflow-auto">
+        <div className="flex-1 p-2 sm:p-4 md:p-6 lg:p-8 bg-gray-50 dark:bg-gray-900 max-w-full overflow-x-auto">
+          {/* Render main sections */}
           {active === "Dashboard" && renderDashboard()}
           {active === "Users" && renderUsers()}
           {active === "Courses" && renderCourses()}
           {active === "Notices" && renderNotices()}
+          {active === "MCQ" && renderMCQ()}
+          {active === "Conduct Mock Test" && renderMockTest()}
+          {active === "Publish Study Material" && renderPublishMaterial()}
+          {active === "Notifications" && renderNotifications()}
+          {active === "Assign Role" && renderAssignRole({
+            role: assignRole,
+            setRole: setAssignRole,
+            name: assignName,
+            setName: setAssignName,
+            email: assignEmail,
+            setEmail: setAssignEmail,
+            success: assignSuccess,
+            handleSubmit: handleAssignRoleSubmit,
+          })}
           {active === "Settings" && renderSettings()}
         </div>
       </main>
+
+      {/* Notifications Dropdown */}
+      {showNotificationsDropdown && (
+        <div ref={notificationsDropdownRef} className="fixed right-2 top-20 w-full max-w-xs sm:max-w-md md:max-w-lg rounded-xl shadow-2xl border z-50 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700">
+          <div className="p-4 border-b border-gray-100 dark:border-gray-700">
+            <h3 className="font-semibold text-sm text-gray-900 dark:text-white">Notifications</h3>
+          </div>
+          <div className="max-h-96 overflow-y-auto">
+            {dummyNotifications.map((n) => (
+              <div
+                key={n.id}
+                className={`p-4 border-b last:border-b-0 hover:bg-opacity-50 transition-colors ${
+                  n.type === "success"
+                    ? "bg-green-50 dark:bg-green-950 border-green-100 dark:border-green-900"
+                    : n.type === "warning"
+                    ? "bg-yellow-50 dark:bg-yellow-950 border-yellow-100 dark:border-yellow-900"
+                    : "bg-blue-50 dark:bg-blue-950 border-blue-100 dark:border-blue-900"
+                }`}
+              >
+                <div className="flex items-start gap-3">
+                  <Bell size={18} className={
+                    n.type === "success"
+                      ? "text-green-500"
+                      : n.type === "warning"
+                      ? "text-yellow-500"
+                      : "text-blue-500"
+                  } />
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-medium text-sm text-gray-900 dark:text-white">{n.title}</h4>
+                    <p className="text-xs mt-1 text-gray-600 dark:text-gray-300">{n.message}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

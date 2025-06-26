@@ -11,7 +11,7 @@ import { AuthLayout } from "./components/index.js";
 import Signup from "./pages/Signup.jsx";
 import Login from "./pages/Login.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
-import Post from "./pages/Post";
+import StudentDashboard from "./pages/StudentDashboard.jsx";
 
 const router = createBrowserRouter([
   {
@@ -38,18 +38,22 @@ const router = createBrowserRouter([
           </AuthLayout>
         ),
       },
-      {
-        path: "/admin-dashboard",
-        element: (
-          <AuthLayout authentication={true}>
-            <AdminDashboard />
-          </AuthLayout>
-        ),
-      },
+      // {
+      //   path: "/admin-dashboard",
+      //   element: (
+      //     <AuthLayout authentication={true}>
+      //       <AdminDashboard />
+      //     </AuthLayout>
+      //   ),
+      // },
 
       {
-        path: "/post/:slug",
-        element: <Post />,
+        path: "/student-dashboard",
+        element: (
+          <AuthLayout authentication={true}>
+            <StudentDashboard />
+          </AuthLayout>
+        ),
       },
     ],
   },

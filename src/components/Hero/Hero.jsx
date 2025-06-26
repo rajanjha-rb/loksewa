@@ -1,9 +1,10 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { useTypewriter, Cursor } from "react-simple-typewriter";
-import { BookOpen, ClipboardList, UserCircle2, Bell } from "lucide-react";
+import { BookOpen, ClipboardList, UserCircle2, Bell, Sun, Moon } from "lucide-react";
 import { FaQuoteLeft, FaChalkboardTeacher } from "react-icons/fa";
 import { FiArrowRight } from "react-icons/fi";
+import React, { useState, useEffect } from "react";
 
 const coursesData = [
   {
@@ -43,8 +44,24 @@ const Hero = () => {
     show: { opacity: 1, y: 0 },
   };
 
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) return savedTheme === "dark";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDarkMode]);
+
   return (
-    <div className="bg-gray-50 text-gray-800">
+    <div className="bg-gray-50 text-gray-800 relative">
       {/* Hero Section */}
       <section className="bg-gray-900 text-white py-20 w-full">
         <div className="w-full flex flex-col items-center text-center space-y-6">
@@ -165,7 +182,7 @@ const Hero = () => {
             About Us
           </h2>
           <p className="text-gray-700 leading-relaxed max-w-3xl mx-auto text-lg">
-            Loksewa Academy is Nepal’s modern solution for Loksewa preparation.
+            Loksewa Academy is Nepal's modern solution for Loksewa preparation.
             We offer intuitive learning experiences, real-exam simulations, and
             expert insights to guide students toward success.
           </p>
@@ -188,12 +205,14 @@ const Hero = () => {
           <p className="text-gray-600 mb-6">
             Have questions or suggestions? We'd love to hear from you.
           </p>
-          <Link
-            to="/contact"
+          <a
+            href="https://wa.me/9779762717552"
+            target="_blank"
+            rel="noopener noreferrer"
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-md inline-block"
           >
             Contact Us
-          </Link>
+          </a>
         </motion.div>
       </section>
     </div>

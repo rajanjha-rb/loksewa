@@ -2,13 +2,28 @@ import { LogoutBtn, Container } from "../index";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 function Header() {
   const authStatus = useSelector((state) => state.auth?.status ?? false);
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) return savedTheme === "dark";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDarkMode]);
 
   const navItems = [
     { name: "Home", slug: "/", status: true, isButton: false },
@@ -39,63 +54,61 @@ function Header() {
             aria-label="Loksewa Academy Home"
           >
             <img
-              src="/logo.png"
+              src="/logo.svg"
               alt="Loksewa Academy Logo"
               className="h-8 w-auto"
             />
-            <span className="hidden md:inline-block text-2xl font-extrabold tracking-wide select-none">
-              Loksewa Academy
-            </span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <ul className="hidden md:flex items-center gap-6 text-sm font-semibold mr-4">
-            {navItems.map(
-              (item) =>
-                item.status && (
-                  <li key={item.name}>
-                    {item.isButton ? (
-                      <button
-                        onClick={() => navigate(item.slug)}
-                        className={`
-                          px-5 py-2 rounded-md font-semibold text-white transition
-                          ${
-                            item.color === "blue"
-                              ? "bg-blue-600 hover:bg-blue-700"
-                              : "bg-green-600 hover:bg-green-700"
-                          }
-                          ${item.name === "Signup" ? "pr-4" : ""}
-                        `}
-                      >
-                        {item.name}
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => navigate(item.slug)}
-                        className="relative group px-2 py-1 text-gray-200 hover:text-blue-400 transition-colors duration-200"
-                      >
-                        {item.name}
-                        <span className="block max-w-0 group-hover:max-w-full transition-all duration-300 h-0.5 bg-blue-400 rounded mt-1" />
-                      </button>
-                    )}
-                  </li>
-                )
-            )}
-            {authStatus && (
-              <li>
-                <LogoutBtn />
-              </li>
-            )}
-          </ul>
-
-          {/* Mobile Menu Toggle */}
-          <button
-            aria-label={menuOpen ? "Close menu" : "Open menu"}
-            className="md:hidden text-gray-100 hover:text-blue-400 transition-colors duration-200 pr-2"
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
-            {menuOpen ? <X size={28} /> : <Menu size={28} />}
-          </button>
+          {/* Desktop & Mobile Navigation */}
+          <div className="flex items-center gap-4">
+            <ul className="hidden md:flex items-center gap-6 text-sm font-semibold mr-2">
+              {navItems.map(
+                (item) =>
+                  item.status && (
+                    <li key={item.name}>
+                      {item.isButton ? (
+                        <button
+                          onClick={() => navigate(item.slug)}
+                          className={`
+                            px-5 py-2 rounded-md font-semibold text-white transition
+                            ${
+                              item.color === "blue"
+                                ? "bg-blue-600 hover:bg-blue-700"
+                                : "bg-green-600 hover:bg-green-700"
+                            }
+                            ${item.name === "Signup" ? "pr-4" : ""}
+                          `}
+                        >
+                          {item.name}
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => navigate(item.slug)}
+                          className="relative group px-2 py-1 text-gray-200 hover:text-blue-400 transition-colors duration-200"
+                        >
+                          {item.name}
+                          <span className="block max-w-0 group-hover:max-w-full transition-all duration-300 h-0.5 bg-blue-400 rounded mt-1" />
+                        </button>
+                      )}
+                    </li>
+                  )
+              )}
+              {authStatus && (
+                <li>
+                  <LogoutBtn />
+                </li>
+              )}
+            </ul>
+            {/* Mobile Menu Toggle */}
+            <button
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              className="md:hidden text-gray-100 hover:text-blue-400 transition-colors duration-200 pr-2"
+              onClick={() => setMenuOpen(!menuOpen)}
+            >
+              {menuOpen ? <X size={28} /> : <Menu size={28} />}
+            </button>
+          </div>
         </nav>
 
         {/* Mobile Dropdown */}
