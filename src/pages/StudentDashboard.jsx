@@ -1292,16 +1292,16 @@ const StudentDashboard = () => {
                         <button
                           key={course.id}
                           onClick={() => setActiveCourseTab(idx)}
-                          className={`flex items-center gap-2 px-4 py-2 rounded-full font-semibold text-xs sm:text-sm transition-all duration-150 shadow-sm border whitespace-nowrap
+                          className={`flex items-center gap-2 px-4 py-2 rounded-full font-semibold text-xs sm:text-sm transition-all duration-150 shadow-sm border whitespace-nowrap truncate
                             ${activeCourseTab === idx
                               ? "bg-blue-600 text-white border-blue-600 shadow-md"
                               : isDarkMode
                                 ? "bg-gray-800 text-gray-200 border-gray-700 hover:bg-blue-900"
                                 : "bg-gray-200 text-gray-700 border-transparent hover:bg-blue-100"}
                           `}
-                          style={{ minWidth: '120px', justifyContent: 'center' }}
+                          style={{ minWidth: '64px', maxWidth: '80px', justifyContent: 'center', overflow: 'hidden', textOverflow: 'ellipsis' }}
                         >
-                          <BookOpen size={16} /> {course.title}
+                          <BookOpen size={16} /> <span className="truncate">{course.tabLabel || course.title}</span>
                         </button>
                       ))}
                     </div>
