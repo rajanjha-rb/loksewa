@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { LogoutBtn } from "../components";
+import { LogoutBtn } from "../components/Header/LogoutBtn";
 import {
   Home,
   Users,
@@ -1504,10 +1504,9 @@ export default function AdminDashboard() {
               <span className="text-sm font-medium">{darkMode ? 'Light Mode' : 'Dark Mode'}</span>
             </button>
             <button
-              className={`w-full flex items-center gap-2 justify-center mt-3 ${darkMode ? "bg-red-700 hover:bg-red-800" : "bg-red-600 hover:bg-red-700"} text-white font-semibold py-2 rounded-lg transition-colors`}
-              onClick={() => {/* logout logic here or use LogoutBtn if available */}}
+              className="w-full flex items-center gap-2 justify-center mt-3"
             >
-              Logout
+              <LogoutBtn className={`w-full flex items-center gap-2 justify-center mt-3 ${darkMode ? "bg-red-700 hover:bg-red-800" : "bg-red-600 hover:bg-red-700"} text-white font-semibold py-2 rounded-lg transition-colors`} />
             </button>
           </div>
         </div>
