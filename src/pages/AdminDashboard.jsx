@@ -1477,8 +1477,8 @@ export default function AdminDashboard() {
             ))}
           </nav>
 
-          {/* Admin Profile Section */}
-          <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+          {/* Admin Profile Section (sticky bottom) */}
+          <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-inherit">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full overflow-hidden border-2 border-blue-300 dark:border-blue-700 shadow">
                 <img
