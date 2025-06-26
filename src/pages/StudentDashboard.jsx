@@ -36,9 +36,21 @@ const StudentDashboard = () => {
   // Check for saved theme preference or use system preference
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const savedTheme = localStorage.getItem("theme");
-    if (savedTheme) return savedTheme === "dark";
+    if (savedTheme === "dark") return true;
+    if (savedTheme === "light") return false;
+    // No saved preference, use system preference
     return window.matchMedia("(prefers-color-scheme: dark)").matches;
   });
+
+  // Listen for system theme changes if no user preference
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) return; // Don't override user preference
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleChange = (e) => setIsDarkMode(e.matches);
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
 
   const [activeTab, setActiveTab] = useState("dashboard");
   const [showNotifications, setShowNotifications] = useState(false);
