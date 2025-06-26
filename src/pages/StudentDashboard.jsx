@@ -808,17 +808,20 @@ const StudentDashboard = () => {
       >
         {/* Mobile Header Row: Hamburger + Search */}
         <div className="flex items-center gap-2 w-full px-2 py-2 sm:hidden">
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className={`p-2 rounded-lg transition-colors flex items-center justify-center h-10 w-10 ${
-              isDarkMode
-                ? "hover:bg-gray-700 text-gray-300"
-                : "hover:bg-gray-100 text-gray-600"
-            }`}
-            aria-label="Open sidebar menu"
-          >
-            {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
+          {/* Only show hamburger if sidebar is closed */}
+          {!sidebarOpen && (
+            <button
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className={`p-2 rounded-lg transition-colors flex items-center justify-center h-10 w-10 ${
+                isDarkMode
+                  ? "hover:bg-gray-700 text-gray-300"
+                  : "hover:bg-gray-100 text-gray-600"
+              }`}
+              aria-label="Open sidebar menu"
+            >
+              <Menu size={20} />
+            </button>
+          )}
           <div className="flex-1 relative">
             <Search
               className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 ${
