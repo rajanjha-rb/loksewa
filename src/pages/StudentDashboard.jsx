@@ -1028,29 +1028,25 @@ const StudentDashboard = () => {
       <div className="flex">
         {/* Sidebar */}
         <aside
-          className={`flex flex-col h-screen fixed inset-y-0 left-0 z-40 w-64 transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
-            sidebarOpen ? "translate-x-0" : "-translate-x-full"
-          } ${
-            isDarkMode
-              ? "bg-gray-800 border-gray-700"
-              : "bg-white border-gray-200"
-          } border-r lg:mt-16 lg:max-h-none shadow-2xl lg:shadow-none`}
-          style={{ touchAction: sidebarOpen ? 'none' : 'auto' }}
+          className={`fixed lg:static inset-y-0 left-0 z-50 w-64 max-w-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700
+        transform transition-transform duration-200 ease-in-out
+        ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
+        shadow-xl`}
         >
-          {/* Close button for mobile */}
-          <div className="flex items-center justify-between lg:hidden px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-            <span className="font-bold text-lg text-gray-800 dark:text-white">Menu</span>
-            <button
-              onClick={() => setSidebarOpen(false)}
-              className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition"
-              aria-label="Close sidebar"
-            >
-              <X size={24} />
-            </button>
-          </div>
-          {/* Scrollable menu area */}
-          <div className="flex-1 min-h-0 overflow-y-auto p-4">
-            <nav className="space-y-1">
+          <div className="flex flex-col h-full">
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700 lg:hidden">
+              <span className="font-bold text-lg text-gray-800 dark:text-white">Menu</span>
+              <button
+                onClick={() => setSidebarOpen(false)}
+                className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+                aria-label="Close sidebar"
+              >
+                <X size={24} />
+              </button>
+            </div>
+            {/* Navigation (scrollable) */}
+            <nav className="flex-1 overflow-y-auto p-4 space-y-1">
               {sidebarWithNotifications.map((item) => (
                 item.id === "notifications" ? (
                   <button
@@ -1094,28 +1090,28 @@ const StudentDashboard = () => {
                 )
               ))}
             </nav>
-          </div>
-          {/* Mobile-only: Profile, Dark Mode, Logout */}
-          <div className="lg:hidden px-4 pt-4 pb-4 flex flex-col gap-4 border-t border-gray-200 dark:border-gray-700 bg-inherit">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-lg font-bold text-white">JS</div>
-              <div>
-                <div className={`font-semibold text-base ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>John Smith</div>
-                <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Aspiring Civil Servant</div>
+            {/* Profile/Logout (sticky bottom) */}
+            <div className="p-4 border-t border-gray-200 dark:border-gray-700 lg:hidden bg-inherit">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-lg font-bold text-white">JS</div>
+                <div>
+                  <div className={`font-semibold text-base ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>John Smith</div>
+                  <div className={`text-xs ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`}>Aspiring Civil Servant</div>
+                </div>
               </div>
+              <button
+                onClick={() => setIsDarkMode(!isDarkMode)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors w-full justify-center ${
+                  isDarkMode
+                    ? "bg-gray-700 text-yellow-400 hover:bg-gray-600"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
+                <span className="text-sm font-medium">{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
+              </button>
+              <LogoutBtn className={`w-full flex items-center gap-2 justify-center mt-3 ${isDarkMode ? "bg-red-700 hover:bg-red-800" : "bg-red-600 hover:bg-red-700"} text-white font-semibold py-2 rounded-lg transition-colors`} />
             </div>
-            <button
-              onClick={() => setIsDarkMode(!isDarkMode)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors w-full justify-center ${
-                isDarkMode
-                  ? "bg-gray-700 text-yellow-400 hover:bg-gray-600"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
-            >
-              {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
-              <span className="text-sm font-medium">{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
-            </button>
-            <LogoutBtn className={`w-full flex items-center gap-2 justify-center ${isDarkMode ? "bg-red-700 hover:bg-red-800" : "bg-red-600 hover:bg-red-700"} text-white font-semibold py-2 rounded-lg transition-colors`} />
           </div>
         </aside>
 
