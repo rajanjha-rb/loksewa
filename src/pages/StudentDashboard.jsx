@@ -806,26 +806,47 @@ const StudentDashboard = () => {
             : "bg-white border-gray-200"
         }`}
       >
-        <div className="flex flex-col sm:flex-row items-center justify-between px-2 sm:px-4 lg:px-6 h-auto sm:h-16 gap-2 sm:gap-0">
-          {/* Left section */}
-          <div className="flex items-center w-full sm:w-auto justify-between">
-            <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className={`lg:hidden p-2 rounded-lg transition-colors flex items-center justify-center h-10 w-10 mt-0.5 ${
-                isDarkMode
-                  ? "hover:bg-gray-700 text-gray-300"
-                  : "hover:bg-gray-100 text-gray-600"
+        {/* Mobile Header Row: Hamburger + Search */}
+        <div className="flex items-center gap-2 w-full px-2 py-2 sm:hidden">
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className={`p-2 rounded-lg transition-colors flex items-center justify-center h-10 w-10 ${
+              isDarkMode
+                ? "hover:bg-gray-700 text-gray-300"
+                : "hover:bg-gray-100 text-gray-600"
+            }`}
+            aria-label="Open sidebar menu"
+          >
+            {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+          <div className="flex-1 relative">
+            <Search
+              className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 ${
+                isDarkMode ? "text-gray-400" : "text-gray-500"
               }`}
-              style={{ alignSelf: 'center' }}
-              aria-label="Open sidebar menu"
-            >
-              {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
-            </button>
+            />
+            <input
+              type="text"
+              placeholder="Search courses..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className={`pl-10 pr-4 py-2 rounded-lg border transition-colors text-sm w-full ${
+                isDarkMode
+                  ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500"
+                  : "bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-500"
+              } focus:outline-none focus:ring-2 focus:ring-blue-500/20`}
+            />
           </div>
-
+        </div>
+        {/* Desktop/Tablet Header */}
+        <div className="hidden sm:flex flex-col sm:flex-row items-center justify-between px-4 lg:px-6 h-auto sm:h-16 gap-2 sm:gap-0">
+          {/* Left section (empty for now, could add logo) */}
+          <div className="flex items-center w-full sm:w-auto justify-between">
+            {/* Hamburger hidden on sm+ */}
+          </div>
           {/* Right section */}
           <div className="flex items-center space-x-2 sm:space-x-3 w-full sm:w-auto justify-end">
-            {/* Search - hidden on mobile, full width on mobile below */}
+            {/* Search - visible on md+ */}
             <div className="hidden md:flex relative w-64">
               <Search
                 className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 ${
@@ -843,27 +864,6 @@ const StudentDashboard = () => {
                     : "bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-500"
                 } focus:outline-none focus:ring-2 focus:ring-blue-500/20`}
               />
-            </div>
-            {/* Mobile search bar */}
-            <div className="flex md:hidden w-full">
-              <div className="relative w-full">
-                <Search
-                  className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 ${
-                    isDarkMode ? "text-gray-400" : "text-gray-500"
-                  }`}
-                />
-                <input
-                  type="text"
-                  placeholder="Search courses..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className={`pl-10 pr-4 py-2 rounded-lg border transition-colors text-sm w-full ${
-                    isDarkMode
-                      ? "bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-blue-500"
-                      : "bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-500"
-                  } focus:outline-none focus:ring-2 focus:ring-blue-500/20`}
-                />
-              </div>
             </div>
             {/* Theme toggle */}
             <button
