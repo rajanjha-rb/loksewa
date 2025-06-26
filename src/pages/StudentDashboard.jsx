@@ -859,8 +859,8 @@ const StudentDashboard = () => {
             >
               {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
-            {/* Notifications */}
-            <div className="relative">
+            {/* Notifications - only on large screens */}
+            <div className="relative hidden lg:block">
               <button
                 onClick={() => setShowNotifications(!showNotifications)}
                 className={`relative p-2 rounded-lg transition-colors ${
@@ -1030,6 +1030,25 @@ const StudentDashboard = () => {
           </div>
           <div className="p-4">
             <nav className="space-y-1">
+              {/* Notifications in sidebar for mobile and desktop */}
+              <button
+                onClick={() => {
+                  setShowNotifications(!showNotifications);
+                  setSidebarOpen(false);
+                }}
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 text-base sm:text-sm ${
+                  isDarkMode
+                    ? "text-gray-300 hover:bg-gray-700 hover:text-white"
+                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                } lg:hidden`}
+              >
+                <Bell size={18} />
+                <span className="font-medium">Notifications</span>
+                {notifications.some((n) => n.unread) && (
+                  <span className="ml-2 w-2 h-2 bg-blue-500 rounded-full"></span>
+                )}
+              </button>
+              {/* Sidebar nav items */}
               {sidebarItems.map((item) => (
                 <button
                   key={item.id}
