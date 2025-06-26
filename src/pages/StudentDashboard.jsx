@@ -1017,7 +1017,8 @@ const StudentDashboard = () => {
             isDarkMode
               ? "bg-gray-800 border-gray-700"
               : "bg-white border-gray-200"
-          } border-r overflow-y-auto mt-16 lg:mt-0 max-h-[calc(100vh-4rem)] lg:max-h-none`}
+          } border-r overflow-y-auto mt-16 lg:mt-0 max-h-[calc(100vh-4rem)] lg:max-h-none shadow-2xl lg:shadow-none`}
+          style={{ touchAction: sidebarOpen ? 'none' : 'auto' }}
         >
           <div className="p-4">
             <nav className="space-y-1">
@@ -1050,6 +1051,7 @@ const StudentDashboard = () => {
         {sidebarOpen && (
           <div
             className="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-30 mt-16"
+            style={{ touchAction: 'auto' }}
             onClick={() => setSidebarOpen(false)}
           ></div>
         )}
@@ -1257,44 +1259,7 @@ const StudentDashboard = () => {
           {activeTab === "courses" && (
             <div className="space-y-4 sm:space-y-6">
               {/* Search and Filter - Mobile visible */}
-              <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 md:hidden">
-                <div className="relative flex-1">
-                  <Search
-                    className={`absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 ${
-                      isDarkMode ? "text-gray-400" : "text-gray-500"
-                    }`}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Search courses..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className={`w-full pl-10 pr-4 py-2 rounded-lg border transition-colors text-sm ${
-                      isDarkMode
-                        ? "bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:border-blue-500"
-                        : "bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:border-blue-500"
-                    } focus:outline-none focus:ring-2 focus:ring-blue-500/20`}
-                  />
-                </div>
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className={`px-3 py-2 rounded-lg border transition-colors text-sm ${
-                    isDarkMode
-                      ? "bg-gray-800 border-gray-700 text-white focus:border-blue-500"
-                      : "bg-white border-gray-300 text-gray-900 focus:border-blue-500"
-                  } focus:outline-none focus:ring-2 focus:ring-blue-500/20`}
-                >
-                  <option value="all">All Categories</option>
-                  <option value="Government Job Preparation">
-                    Government Job
-                  </option>
-                  <option value="Mathematics">Mathematics</option>
-                  <option value="Language">Language</option>
-                  <option value="Current Affairs">Current Affairs</option>
-                  <option value="Law & Constitution">Law & Constitution</option>
-                </select>
-              </div>
+              {/* Remove mobile search bar, keep only header search */}
 
               {/* My Enrolled Courses - TABS */}
               <div>
