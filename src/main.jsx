@@ -13,15 +13,18 @@ import Login from "./pages/Login.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import StudentDashboard from "./pages/StudentDashboard.jsx";
 
+// ✅ Step 1: Import Vercel Speed Insights
+import { injectSpeedInsights } from "@vercel/speed-insights";
+
+// ✅ Step 2: Call it before rendering
+injectSpeedInsights();
+
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
     children: [
-      {
-        path: "/",
-        element: <Home />,
-      },
+      { path: "/", element: <Home /> },
       {
         path: "/login",
         element: (
@@ -38,15 +41,6 @@ const router = createBrowserRouter([
           </AuthLayout>
         ),
       },
-      // {
-      //   path: "/admin-dashboard",
-      //   element: (
-      //     <AuthLayout authentication={true}>
-      //       <AdminDashboard />
-      //     </AuthLayout>
-      //   ),
-      // },
-
       {
         path: "/student-dashboard",
         element: (
@@ -55,6 +49,7 @@ const router = createBrowserRouter([
           </AuthLayout>
         ),
       },
+      // Add admin dashboard here if needed
     ],
   },
 ]);
