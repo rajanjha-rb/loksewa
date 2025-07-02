@@ -14,7 +14,7 @@ import AdminDashboard from "./pages/AdminDashboard.jsx";
 import StudentDashboard from "./pages/StudentDashboard.jsx";
 
 // ✅ Step 1: Import Vercel Speed Insights
-import { injectSpeedInsights } from "@vercel/speed-insights";
+import { SpeedInsights  } from "@vercel/speed-insights/react";
 
 // ✅ Step 2: Call it before rendering
 injectSpeedInsights();
